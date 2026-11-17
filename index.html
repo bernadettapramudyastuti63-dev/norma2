@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Norma - Kuis PPKn Kelas 7</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans & Fredoka -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tone.js untuk Efek Suara Interaktif -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- Canvas Confetti untuk Efek Selebrasi -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 50%, #F3E8FF 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, .font-display {
+            font-family: 'Fredoka', sans-serif;
+        }
+        
+        /* Animasi Kustom */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.92) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-pop-in {
+            animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        /* Custom Scrollbar untuk Modal Kunci Jawaban */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex items-center justify-center p-3 sm:p-6">
+
+    <!-- Dekorasi Latar Belakang -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div class="absolute -top-20 -left-20 w-72 h-72 bg-indigo-300/30 rounded-full blur-3xl"></div>
+        <div class="absolute top-1/2 -right-20 w-80 h-80 bg-purple-300/30 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-20 left-1/3 w-72 h-72 bg-sky-300/30 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Kontainer Utama Game -->
+    <main class="relative z-10 w-full max-w-3xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-white/60 overflow-hidden transition-all duration-300">
+        
+        <!-- Header Bar Kecil (Kontrol Suara) -->
+        <div class="bg-slate-50/80 border-b border-slate-100 px-5 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-indigo-600 text-white font-bold text-sm shadow-sm">
+                    ⚖️
+                </span>
+                <span class="font-display font-semibold text-slate-700 text-sm sm:text-base">PPKn Kelas 7 SMP</span>
+            </div>
+            <button id="soundToggleBtn" onclick="toggleSound()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 active:scale-95 transition text-xs sm:text-sm font-medium shadow-sm" title="Aktifkan/Matikan Suara">
+                <span id="soundIcon">🔊</span>
+                <span id="soundLabel" class="hidden sm:inline">Suara Aktif</span>
+            </button>
+        </div>
+
+        <!-- ==========================================
+             1. LAYAR AWAL (START SCREEN)
+        =========================================== -->
+        <section id="startScreen" class="p-6 sm:p-10 text-center animate-pop-in">
+            <div class="inline-block mb-4 animate-float">
+                <div class="w-24 h-24 mx-auto bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-3xl shadow-lg shadow-indigo-200 flex items-center justify-center text-5xl transform -rotate-3">
+                    🧭
+                </div>
+            </div>
+
+            <span class="inline-block px-3.5 py-1 rounded-full bg-indigo-100 text-indigo-700 font-semibold text-xs sm:text-sm mb-3 tracking-wide">
+                MATERI NORMA & KEADILAN
+            </span>
+            <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-3 leading-tight">
+                Petualangan Norma:<br class="hidden sm:inline"> Kuis Interaktif PPKn
+            </h1>
+            <p class="text-slate-600 text-sm sm:text-base max-w-xl mx-auto mb-6 leading-relaxed">
+                Uji pemahamanmu tentang penerapan <strong>Norma Agama, Kesusilaan, Kesopanan, dan Hukum</strong> dalam kehidupan sehari-hari di sekolah dan masyarakat!
+            </p>
+
+            <!-- Kartu 4 Pilar Norma -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 mb-7 text-left">
+                <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-100">
+                    <div class="text-2xl mb-1">🕌</div>
+                    <div class="font-bold text-emerald-900 text-xs sm:text-sm">Norma Agama</div>
+                    <div class="text-[11px] text-emerald-700">Wahyu Tuhan YME</div>
+                </div>
+                <div class="p-3 rounded-2xl bg-rose-50 border border-rose-100">
+                    <div class="text-2xl mb-1">💖</div>
+                    <div class="font-bold text-rose-900 text-xs sm:text-sm">Norma Kesusilaan</div>
+                    <div class="text-[11px] text-rose-700">Hati Nurani Manusia</div>
+                </div>
+                <div class="p-3 rounded-2xl bg-amber-50 border border-amber-100">
+                    <div class="text-2xl mb-1">🤝</div>
+                    <div class="font-bold text-amber-900 text-xs sm:text-sm">Norma Kesopanan</div>
+                    <div class="text-[11px] text-amber-700">Pergaulan Masyarakat</div>
+                </div>
+                <div class="p-3 rounded-2xl bg-sky-50 border border-sky-100">
+                    <div class="text-2xl mb-1">🏛️</div>
+                    <div class="font-bold text-sky-900 text-xs sm:text-sm">Norma Hukum</div>
+                    <div class="text-[11px] text-sky-700">Lembaga Negara</div>
+                </div>
+            </div>
+
+            <!-- Instruksi Bermain -->
+            <div class="bg-slate-50 rounded-2xl p-4 sm:p-5 mb-7 border border-slate-200/80 text-left max-w-xl mx-auto">
+                <h2 class="font-bold text-slate-800 text-sm sm:text-base mb-2.5 flex items-center gap-2">
+                    <span>📋</span> Aturan & Cara Bermain:
+                </h2>
+                <ul class="space-y-2 text-xs sm:text-sm text-slate-600">
+                    <li class="flex items-start gap-2">
+                        <span class="text-indigo-600 font-bold">1.</span>
+                        <span>Terdapat <strong>10 soal pilihan ganda</strong> seputar kehidupan pelajar SMP.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-indigo-600 font-bold">2.</span>
+                        <span>Setiap soal memiliki waktu <strong>25 detik</strong>. Jika waktu habis, soal otomatis dianggap salah.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-indigo-600 font-bold">3.</span>
+                        <span>Setiap jawaban benar bernilai <strong>10 poin</strong> (Total skor maksimal 100).</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-indigo-600 font-bold">4.</span>
+                        <span>Baca pembahasan singkat setelah menjawab dan cek <strong>Kunci Jawaban Lengkap</strong> di akhir permainan!</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Input Nama Opsional & Tombol Mulai -->
+            <div class="max-w-md mx-auto space-y-3">
+                <input type="text" id="playerNameInput" maxlength="25" placeholder="Ketik namamu di sini (opsional)..." 
+                    class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 focus:border-indigo-500 focus:outline-none text-center font-medium text-slate-700 placeholder:text-slate-400 transition">
+                
+                <button onclick="startGame()" class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-display font-bold text-lg sm:text-xl shadow-lg shadow-indigo-200 hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 transition flex items-center justify-center gap-2 cursor-pointer">
+                    <span>🚀</span> Mulai Bermain Sekarang
+                </button>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             2. LAYAR KUIS (QUIZ SCREEN)
+        =========================================== -->
+        <section id="quizScreen" class="hidden p-5 sm:p-8">
+            <!-- Top Info Bar: Nomor Soal, Timer Keseluruhan, Skor -->
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                <div class="flex items-center gap-2">
+                    <span id="questionCounter" class="px-3.5 py-1.5 rounded-xl bg-indigo-100 text-indigo-800 font-bold text-xs sm:text-sm">
+                        Soal 1 / 10
+                    </span>
+                    <span id="categoryBadge" class="px-3 py-1.5 rounded-xl bg-purple-100 text-purple-800 font-semibold text-xs">
+                        Kategori
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <!-- Total Waktu Bermain -->
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs sm:text-sm font-semibold" title="Total waktu bermain">
+                        <span>⏱️</span>
+                        <span id="totalTimerDisplay">00:00</span>
+                    </div>
+                    <!-- Skor Saat Ini -->
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 text-amber-800 text-xs sm:text-sm font-bold">
+                        <span>⭐</span>
+                        <span id="liveScoreDisplay">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timer Per Soal (Angka & Progress Bar) -->
+            <div class="mb-6 bg-slate-50 p-3 rounded-2xl border border-slate-200/70">
+                <div class="flex items-center justify-between text-xs sm:text-sm font-bold mb-1.5">
+                    <span class="text-slate-500">Sisa Waktu Soal Ini:</span>
+                    <span id="questionTimerText" class="text-emerald-600 font-display text-base">25 detik</span>
+                </div>
+                <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+                    <div id="questionTimerBar" class="h-full bg-emerald-500 rounded-full transition-all duration-200 ease-linear" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <!-- Kotak Pertanyaan -->
+            <div id="questionCard" class="animate-pop-in">
+                <div class="bg-gradient-to-br from-slate-50 to-indigo-50/40 border border-indigo-100 rounded-2xl p-5 sm:p-6 mb-5 shadow-sm">
+                    <p id="questionText" class="text-base sm:text-lg font-semibold text-slate-800 leading-relaxed">
+                        Memuat pertanyaan...
+                    </p>
+                </div>
+
+                <!-- Pilihan Jawaban (A, B, C, D) -->
+                <div id="optionsContainer" class="space-y-3 mb-6">
+                    <!-- Tombol opsi akan di-render lewat JS -->
+                </div>
+            </div>
+
+            <!-- Umpan Balik Langsung & Pembahasan Singkat (Muncul setelah menjawab) -->
+            <div id="feedbackBox" class="hidden rounded-2xl p-4 sm:p-5 mb-5 border-2 animate-pop-in">
+                <div class="flex items-start gap-3">
+                    <div id="feedbackIcon" class="text-2xl sm:text-3xl mt-0.5">✅</div>
+                    <div class="flex-1">
+                        <h3 id="feedbackTitle" class="font-display font-bold text-base sm:text-lg mb-1">
+                            Jawaban Benar!
+                        </h3>
+                        <p id="feedbackExplanation" class="text-xs sm:text-sm leading-relaxed opacity-95">
+                            Penjelasan soal akan muncul di sini.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tombol Lanjut ke Soal Berikutnya -->
+            <div id="nextButtonContainer" class="hidden text-right">
+                <button id="nextBtn" onclick="nextQuestion()" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-display font-bold text-base shadow-md hover:shadow-lg transition inline-flex items-center justify-center gap-2 cursor-pointer">
+                    <span id="nextBtnText">Soal Berikutnya</span>
+                    <span>➡️</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             3. LAYAR AKHIR (RESULT SCREEN)
+        =========================================== -->
+        <section id="resultScreen" class="hidden p-6 sm:p-10 text-center animate-pop-in">
+            <div id="starRatingDisplay" class="text-4xl sm:text-5xl mb-3 tracking-widest">
+                ⭐⭐⭐
+            </div>
+            
+            <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-1">
+                Kuis Selesai, <span id="resultPlayerName" class="text-indigo-600">Pelajar Hebat</span>!
+            </h2>
+            <p id="resultPredicate" class="text-sm sm:text-base font-semibold text-purple-600 mb-6">
+                Predikat: Duta Norma Teladan!
+            </p>
+
+            <!-- Kartu Statistik Skor -->
+            <div class="grid grid-cols-3 gap-3 max-w-lg mx-auto mb-7">
+                <div class="p-4 rounded-2xl bg-indigo-50 border border-indigo-100">
+                    <div class="text-xs text-indigo-600 font-semibold mb-1">Skor Akhir</div>
+                    <div id="finalScoreText" class="font-display text-2xl sm:text-3xl font-bold text-indigo-900">100</div>
+                </div>
+                <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-100">
+                    <div class="text-xs text-emerald-600 font-semibold mb-1">Benar / Salah</div>
+                    <div class="font-display text-xl sm:text-2xl font-bold text-emerald-900">
+                        <span id="correctCountText">10</span> / <span id="wrongCountText" class="text-rose-600">0</span>
+                    </div>
+                </div>
+                <div class="p-4 rounded-2xl bg-amber-50 border border-amber-100">
+                    <div class="text-xs text-amber-600 font-semibold mb-1">Total Waktu</div>
+                    <div id="finalTimeText" class="font-display text-xl sm:text-2xl font-bold text-amber-900">01:20</div>
+                </div>
+            </div>
+
+            <!-- Pesan Motivasi -->
+            <div id="motivationBox" class="max-w-lg mx-auto p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs sm:text-sm text-slate-600 mb-7 leading-relaxed">
+                Luar biasa! Kamu sudah memahami berbagai jenis norma dengan sangat baik. Terus terapkan sikap patuh norma di rumah, sekolah, dan lingkungan sekitar ya!
+            </div>
+
+            <!-- Tombol Aksi Akhir -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-lg mx-auto">
+                <button onclick="openAnswerKeyModal()" class="w-full sm:w-auto flex-1 py-3.5 px-5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-display font-bold text-base shadow-md shadow-amber-200 transition flex items-center justify-center gap-2 cursor-pointer">
+                    <span>📖</span> Kunci Jawaban & Pembahasan
+                </button>
+                <button onclick="restartGame()" class="w-full sm:w-auto flex-1 py-3.5 px-5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-display font-bold text-base shadow-md shadow-indigo-200 transition flex items-center justify-center gap-2 cursor-pointer">
+                    <span>🔄</span> Main Lagi
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==========================================
+         4. MODAL KUNCI JAWABAN & PEMBAHASAN LENGKAP
+    =========================================== -->
+    <div id="answerKeyModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
+        <div class="bg-white w-full max-w-3xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-pop-in">
+            <!-- Header Modal -->
+            <div class="px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex items-center justify-between">
+                <div>
+                    <h3 class="font-display font-bold text-lg sm:text-xl flex items-center gap-2">
+                        <span>📚</span> Kunci Jawaban & Pembahasan Lengkap
+                    </h3>
+                    <p class="text-xs text-indigo-100">Evaluasi hasil jawabanmu pada 10 soal Materi Norma</p>
+                </div>
+                <button onclick="closeAnswerKeyModal()" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white font-bold transition cursor-pointer" title="Tutup">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Konten Daftar Soal & Pembahasan -->
+            <div id="answerKeyContent" class="p-5 sm:p-6 overflow-y-auto space-y-4 bg-slate-50 flex-1">
+                <!-- Diisi secara dinamis oleh JavaScript -->
+            </div>
+
+            <!-- Footer Modal -->
+            <div class="px-6 py-3.5 bg-white border-t border-slate-200 flex justify-between items-center">
+                <span class="text-xs text-slate-500 font-medium">PPKn Kelas 7 - Bab Norma & Keadilan</span>
+                <button onclick="closeAnswerKeyModal()" class="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-semibold text-sm transition cursor-pointer">
+                    Tutup Rangkuman
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         LOGIKA JAVASCRIPT GAME
+    =========================================== -->
+    <script>
+        // Bank Soal Berkualitas untuk Kelas 7 SMP (10 Soal)
+        const quizQuestions = [
+            {
+                id: 1,
+                category: "Norma Kesusilaan",
+                question: "Saat ujian PPKn berlangsung, Raka melihat temannya membuka catatan kecil di bawah meja. Raka sebenarnya juga kesulitan menjawab satu soal, namun ia memilih tidak mencontek karena merasa hatinya akan gelisah dan bersalah jika berbuat curang. Sikap Raka menunjukkan kepatuhan terhadap...",
+                options: [
+                    "Norma Agama",
+                    "Norma Kesusilaan",
+                    "Norma Kesopanan",
+                    "Norma Hukum"
+                ],
+                correctIndex: 1,
+                explanation: "Norma kesusilaan bersumber dari hati nurani manusia yang membedakan perbuatan baik dan buruk. Perasaan gelisah, malu, dan menyesal saat berbuat curang adalah sanksi dari norma kesusilaan."
+            },
+            {
+                id: 2,
+                category: "Norma Kesopanan",
+                question: "Ketika berjalan melewati sekelompok bapak dan ibu guru yang sedang berbincang di depan ruang guru, Dinda menundukkan badan sedikit sambil mengucapkan 'Permisi, Pak, Bu'. Perilaku Dinda merupakan wujud penerapan dari...",
+                options: [
+                    "Norma Hukum",
+                    "Norma Agama",
+                    "Norma Kesopanan",
+                    "Norma Kesusilaan"
+                ],
+                correctIndex: 2,
+                explanation: "Norma kesopanan bersumber dari tata pergaulan masyarakat setempat, seperti menghormati orang yang lebih tua, bertutur kata santun, dan bersikap ramah."
+            },
+            {
+                id: 3,
+                category: "Norma Hukum",
+                question: "Budi yang masih duduk di kelas 7 SMP (berusia 13 tahun) nekat mengendarai sepeda motor ke sekolah tanpa memiliki SIM dan tidak memakai helm. Saat ada razia lalu lintas, polisi menilang Budi. Sanksi yang diterima Budi merupakan ciri khas dari...",
+                options: [
+                    "Norma Hukum karena sanksinya tegas, nyata, dan memaksa",
+                    "Norma Kesopanan karena dicemooh oleh pengguna jalan lain",
+                    "Norma Kesusilaan karena menimbulkan rasa malu pada diri sendiri",
+                    "Norma Agama karena melanggar perintah orang tua"
+                ],
+                correctIndex: 0,
+                explanation: "Norma hukum dibuat oleh lembaga negara yang berwenang dan memiliki sanksi yang bersifat tegas, nyata, dan memaksa (seperti tilang, denda, atau penjara) oleh aparat penegak hukum."
+            },
+            {
+                id: 4,
+                category: "Norma Agama",
+                question: "Setiap hari Jumat bagi siswa laki-laki Muslim, atau hari Minggu bagi siswa Kristiani, mereka meluangkan waktu untuk beribadah sesuai keyakinan masing-masing. Aturan yang mewajibkan umat manusia beribadah kepada Tuhan Yang Maha Esa termasuk dalam...",
+                options: [
+                    "Norma Kesopanan",
+                    "Norma Kesusilaan",
+                    "Norma Hukum",
+                    "Norma Agama"
+                ],
+                correctIndex: 3,
+                explanation: "Norma agama adalah sekumpulan kaidah atau peraturan hidup manusia yang sumbernya berasal dari wahyu Tuhan Yang Maha Esa melalui kitab suci masing-masing agama."
+            },
+            {
+                id: 5,
+                category: "Sumber & Sanksi Norma",
+                question: "Perhatikan pernyataan berikut:\n1) Bersumber dari pergaulan masyarakat\n2) Bersifat relatif (berbeda-beda antar daerah)\n3) Sanksinya berupa celaan, cemoohan, atau dikucilkan\n\nPernyataan di atas merupakan ciri-ciri dari...",
+                options: [
+                    "Norma Agama",
+                    "Norma Hukum",
+                    "Norma Kesopanan",
+                    "Norma Kesusilaan"
+                ],
+                correctIndex: 2,
+                explanation: "Norma kesopanan bersifat lokal/relatif (tata krama di satu daerah bisa berbeda dengan daerah lain) dan sanksinya berupa cemoohan atau dikucilkan oleh masyarakat."
+            },
+            {
+                id: 6,
+                category: "Penerapan Sehari-hari",
+                question: "Siti menemukan dompet berisi uang dan kartu identitas di lapangan sekolah. Meskipun tidak ada orang lain yang melihatnya, Siti segera menyerahkan dompet tersebut ke ruang BK agar dikembalikan kepada pemiliknya. Tindakan jujur Siti didorong oleh...",
+                options: [
+                    "Norma Kesusilaan yang berasal dari suara hati nurani",
+                    "Norma Kesopanan agar dipuji oleh guru BK",
+                    "Norma Hukum karena takut ditangkap polisi",
+                    "Norma Adat Istiadat daerah setempat"
+                ],
+                correctIndex: 0,
+                explanation: "Kejujuran meski tidak ada yang mengawasi adalah bisikan suara hati nurani manusia, yang merupakan sumber utama dari norma kesusilaan."
+            },
+            {
+                id: 7,
+                category: "Sanksi Norma Agama",
+                question: "Setiap norma memiliki sanksi bagi pelanggarnya agar tercipta ketertiban. Sanksi yang akan diterima oleh seseorang yang melanggar Norma Agama adalah...",
+                options: [
+                    "Denda uang dan hukuman kurungan",
+                    "Dikucilkan dari pergaulan teman sebaya",
+                    "Dosa dan balasan siksa di akhirat kelak",
+                    "Teguran tertulis dari kepala sekolah"
+                ],
+                correctIndex: 2,
+                explanation: "Sanksi norma agama bersifat tidak langsung di dunia secara fisik, melainkan berupa dosa dan balasan dari Tuhan Yang Maha Esa di kehidupan akhirat nanti."
+            },
+            {
+                id: 8,
+                category: "Perbandingan Norma",
+                question: "Mengapa Norma Hukum sangat diperlukan dalam kehidupan bermasyarakat, berbangsa, dan bernegara meskipun sudah ada norma agama, kesusilaan, dan kesopanan?",
+                options: [
+                    "Karena norma lain sudah tidak berlaku di zaman modern",
+                    "Karena sanksi norma hukum bersifat tegas dan memaksa sehingga melindungi kepentingan semua warga",
+                    "Karena norma hukum hanya berlaku untuk orang dewasa saja",
+                    "Karena norma hukum menggantikan seluruh aturan agama"
+                ],
+                correctIndex: 1,
+                explanation: "Norma lain sanksinya bersifat moral atau batiniah, sehingga dibutuhkan norma hukum yang memiliki sanksi tegas dan memaksa oleh aparat negara untuk menjamin kepastian dan keadilan."
+            },
+            {
+                id: 9,
+                category: "Norma di Lingkungan Sekolah",
+                question: "Di SMP Nusantara terdapat tata tertib yang mewajibkan siswa membuang sampah pada tempatnya dan dilarang melakukan perundungan (bullying). Jika melanggar, siswa mendapat poin pelanggaran dan pembinaan. Tata tertib tertulis sekolah ini merupakan bentuk penerapan...",
+                options: [
+                    "Norma Hukum (aturan resmi yang mengikat warga sekolah)",
+                    "Norma Agama",
+                    "Norma Kesusilaan",
+                    "Norma Kebiasaan"
+                ],
+                correctIndex: 0,
+                explanation: "Tata tertib sekolah merupakan aturan resmi tertulis yang dibuat oleh lembaga berwenang (sekolah) dengan sanksi tegas yang mengikat seluruh siswa, sehingga sejalan dengan prinsip norma hukum di lingkungan sekolah."
+            },
+            {
+                id: 10,
+                category: "Analisis Kasus",
+                question: "Tindakan pencurian barang milik teman di kelas pada dasarnya melanggar beberapa norma sekaligus. Berikut ini pasangan jenis norma dan sanksi yang tepat atas tindakan pencurian tersebut adalah...",
+                options: [
+                    "Norma Kesopanan -> dipenjara oleh polisi",
+                    "Norma Agama -> mendapat dosa dari Tuhan",
+                    "Norma Hukum -> merasa bersalah dalam hati",
+                    "Norma Kesusilaan -> dijatuhi hukuman denda"
+                ],
+                correctIndex: 1,
+                explanation: "Mencuri dilarang oleh semua norma: melanggar Norma Agama (sanksi dosa), Norma Kesusilaan (sanksi rasa bersalah), Norma Kesopanan (dicemooh), dan Norma Hukum (pidana penjara)."
+            }
+        ];
+
+        // Konfigurasi & State Game
+        const TIME_PER_QUESTION = 25; // 25 detik per soal
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let playerName = "Pelajar Hebat";
+        let userAnswers = []; // Menyimpan riwayat jawaban pemain
+        let isAnswered = false;
+        let soundEnabled = true;
+
+        // Variabel Timer
+        let questionTimeLeft = TIME_PER_QUESTION;
+        let questionTimerInterval = null;
+        let totalSecondsElapsed = 0;
+        let totalTimerInterval = null;
+
+        // Inisialisasi Audio Synthesizer dengan Tone.js
+        let synth = null;
+        function initAudio() {
+            if (!synth && typeof Tone !== 'undefined') {
+                synth = new Tone.PolySynth(Tone.Synth).toDestination();
+                synth.volume.value = -8;
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                if (!synth) return;
+                if (Tone.context.state !== 'running') {
+                    Tone.start();
+                }
+
+                const now = Tone.now();
+                if (type === 'click') {
+                    synth.triggerAttackRelease("C5", "32n", now);
+                } else if (type === 'correct') {
+                    synth.triggerAttackRelease("C5", "16n", now);
+                    synth.triggerAttackRelease("E5", "16n", now + 0.08);
+                    synth.triggerAttackRelease("G5", "8n", now + 0.16);
+                } else if (type === 'wrong') {
+                    synth.triggerAttackRelease("Eb4", "16n", now);
+                    synth.triggerAttackRelease("C4", "8n", now + 0.12);
+                } else if (type === 'tick') {
+                    synth.triggerAttackRelease("A5", "64n", now);
+                } else if (type === 'finish') {
+                    synth.triggerAttackRelease("C5", "16n", now);
+                    synth.triggerAttackRelease("E5", "16n", now + 0.1);
+                    synth.triggerAttackRelease("G5", "16n", now + 0.2);
+                    synth.triggerAttackRelease("C6", "4n", now + 0.3);
+                }
+            } catch (e) {
+                // Abaikan error audio jika browser memblokir autoplay
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            const label = document.getElementById('soundLabel');
+            if (soundEnabled) {
+                icon.textContent = '🔊';
+                label.textContent = 'Suara Aktif';
+                playSound('click');
+            } else {
+                icon.textContent = '🔇';
+                label.textContent = 'Suara Mati';
+            }
+        }
+
+        // Fungsi Memulai Game
+        function startGame() {
+            playSound('click');
+            const nameInput = document.getElementById('playerNameInput').value.trim();
+            playerName = nameInput !== "" ? nameInput : "Pelajar Hebat";
+
+            // Reset State
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            totalSecondsElapsed = 0;
+            document.getElementById('liveScoreDisplay').textContent = '0';
+
+            // Ganti Tampilan Layar
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+
+            // Mulai Timer Keseluruhan
+            startTotalTimer();
+
+            // Muat Soal Pertama
+            loadQuestion();
+        }
+
+        // Timer Keseluruhan Permainan
+        function startTotalTimer() {
+            clearInterval(totalTimerInterval);
+            updateTotalTimerUI();
+            totalTimerInterval = setInterval(() => {
+                totalSecondsElapsed++;
+                updateTotalTimerUI();
+            }, 1000);
+        }
+
+        function updateTotalTimerUI() {
+            const mins = Math.floor(totalSecondsElapsed / 60).toString().padStart(2, '0');
+            const secs = (totalSecondsElapsed % 60).toString().padStart(2, '0');
+            document.getElementById('totalTimerDisplay').textContent = `${mins}:${secs}`;
+        }
+
+        // Memuat Soal Berdasarkan Index
+        function loadQuestion() {
+            isAnswered = false;
+            const currentQ = quizQuestions[currentQuestionIndex];
+
+            // Update Header Soal
+            document.getElementById('questionCounter').textContent = `Soal ${currentQuestionIndex + 1} / ${quizQuestions.length}`;
+            document.getElementById('categoryBadge').textContent = currentQ.category;
+            
+            // Format teks pertanyaan (mendukung baris baru \n)
+            document.getElementById('questionText').innerHTML = currentQ.question.replace(/\n/g, '<br>');
+
+            // Sembunyikan Feedback & Tombol Lanjut
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.classList.add('hidden');
+            document.getElementById('nextButtonContainer').classList.add('hidden');
+
+            // Render Pilihan Jawaban
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            const optionLetters = ['A', 'B', 'C', 'D'];
+
+            currentQ.options.forEach((optText, index) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.id = `optionBtn_${index}`;
+                btn.onclick = () => selectAnswer(index);
+                btn.className = `w-full text-left p-3.5 sm:p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-indigo-400 hover:bg-indigo-50/40 transition-all duration-200 flex items-center gap-3.5 group cursor-pointer shadow-sm`;
+                
+                btn.innerHTML = `
+                    <span class="w-9 h-9 rounded-xl bg-slate-100 group-hover:bg-indigo-600 group-hover:text-white text-slate-700 font-display font-bold flex items-center justify-center shrink-0 transition-colors">
+                        ${optionLetters[index]}
+                    </span>
+                    <span class="text-sm sm:text-base font-medium text-slate-700 group-hover:text-slate-900 leading-snug">
+                        ${optText}
+                    </span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Animasi Kartu Soal
+            const qCard = document.getElementById('questionCard');
+            qCard.classList.remove('animate-pop-in');
+            void qCard.offsetWidth; // trigger reflow
+            qCard.classList.add('animate-pop-in');
+
+            // Mulai Timer Per Soal
+            startQuestionTimer();
+        }
+
+        // Timer Hitung Mundur Per Soal
+        function startQuestionTimer() {
+            clearInterval(questionTimerInterval);
+            questionTimeLeft = TIME_PER_QUESTION;
+            updateQuestionTimerUI();
+
+            questionTimerInterval = setInterval(() => {
+                questionTimeLeft--;
+                updateQuestionTimerUI();
+
+                // Bunyi detak saat sisa 5 detik terakhir
+                if (questionTimeLeft <= 5 && questionTimeLeft > 0) {
+                    playSound('tick');
+                }
+
+                // Jika waktu habis
+                if (questionTimeLeft <= 0) {
+                    clearInterval(questionTimerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function updateQuestionTimerUI() {
+            const timerText = document.getElementById('questionTimerText');
+            const timerBar = document.getElementById('questionTimerBar');
+            const percentage = (questionTimeLeft / TIME_PER_QUESTION) * 100;
+
+            timerText.textContent = `${questionTimeLeft} detik`;
+            timerBar.style.width = `${percentage}%`;
+
+            // Perubahan warna indikator waktu
+            if (questionTimeLeft > 12) {
+                timerText.className = 'text-emerald-600 font-display text-base';
+                timerBar.className = 'h-full bg-emerald-500 rounded-full transition-all duration-300 ease-linear';
+            } else if (questionTimeLeft > 6) {
+                timerText.className = 'text-amber-600 font-display text-base';
+                timerBar.className = 'h-full bg-amber-500 rounded-full transition-all duration-300 ease-linear';
+            } else {
+                timerText.className = 'text-rose-600 font-display text-base animate-pulse';
+                timerBar.className = 'h-full bg-rose-500 rounded-full transition-all duration-300 ease-linear';
+            }
+        }
+
+        // Penanganan Jika Waktu Soal Habis
+        function handleTimeOut() {
+            if (isAnswered) return;
+            isAnswered = true;
+            playSound('wrong');
+
+            const currentQ = quizQuestions[currentQuestionIndex];
+
+            // Simpan riwayat jawaban (null = waktu habis)
+            userAnswers.push({
+                questionId: currentQ.id,
+                question: currentQ.question,
+                category: currentQ.category,
+                options: currentQ.options,
+                selectedIndex: null,
+                correctIndex: currentQ.correctIndex,
+                isCorrect: false,
+                isTimeout: true,
+                explanation: currentQ.explanation
+            });
+
+            // Nonaktifkan semua tombol & sorot jawaban benar
+            highlightOptions(-1, currentQ.correctIndex);
+
+            // Tampilkan Kotak Umpan Balik Waktu Habis
+            showFeedback(
+                'timeout',
+                '⏰ Waktu Habis!',
+                `Yah, waktumu untuk soal ini telah habis. Jawaban yang tepat adalah <strong>${['A','B','C','D'][currentQ.correctIndex]}. ${currentQ.options[currentQ.correctIndex]}</strong>.<br><span class="block mt-1.5 text-slate-700">${currentQ.explanation}</span>`
+            );
+
+            showNextButton();
+        }
+
+        // Penanganan Saat Pemain Memilih Jawaban
+        function selectAnswer(selectedIndex) {
+            if (isAnswered) return;
+            isAnswered = true;
+            clearInterval(questionTimerInterval);
+
+            const currentQ = quizQuestions[currentQuestionIndex];
+            const isCorrect = selectedIndex === currentQ.correctIndex;
+
+            if (isCorrect) {
+                score += 10;
+                document.getElementById('liveScoreDisplay').textContent = score;
+                playSound('correct');
+            } else {
+                playSound('wrong');
+                document.getElementById('questionCard').classList.add('animate-shake');
+                setTimeout(() => {
+                    document.getElementById('questionCard').classList.remove('animate-shake');
+                }, 450);
+            }
+
+            // Simpan ke riwayat jawaban
+            userAnswers.push({
+                questionId: currentQ.id,
+                question: currentQ.question,
+                category: currentQ.category,
+                options: currentQ.options,
+                selectedIndex: selectedIndex,
+                correctIndex: currentQ.correctIndex,
+                isCorrect: isCorrect,
+                isTimeout: false,
+                explanation: currentQ.explanation
+            });
+
+            // Warnai opsi benar dan salah
+            highlightOptions(selectedIndex, currentQ.correctIndex);
+
+            // Tampilkan Umpan Balik & Pembahasan
+            if (isCorrect) {
+                showFeedback(
+                    'correct',
+                    '🎉 Hebat! Jawaban Kamu Benar (+10 Poin)',
+                    currentQ.explanation
+                );
+            } else {
+                showFeedback(
+                    'wrong',
+                    '❌ Kurang Tepat! Tetap Semangat',
+                    `Jawaban yang benar adalah <strong>${['A','B','C','D'][currentQ.correctIndex]}. ${currentQ.options[currentQ.correctIndex]}</strong>.<br><span class="block mt-1.5">${currentQ.explanation}</span>`
+                );
+            }
+
+            showNextButton();
+        }
+
+        // Mewarnai Tombol Opsi Setelah Dijawab
+        function highlightOptions(selectedIndex, correctIndex) {
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`optionBtn_${i}`);
+                btn.disabled = true;
+                btn.classList.remove('hover:border-indigo-400', 'hover:bg-indigo-50/40', 'cursor-pointer');
+                btn.classList.add('cursor-default');
+
+                const badge = btn.querySelector('span:first-child');
+
+                if (i === correctIndex) {
+                    // Opsi Benar -> Hijau
+                    btn.className = 'w-full text-left p-3.5 sm:p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50 flex items-center gap-3.5 shadow-sm transition-all';
+                    badge.className = 'w-9 h-9 rounded-xl bg-emerald-500 text-white font-display font-bold flex items-center justify-center shrink-0';
+                    badge.textContent = '✓';
+                } else if (i === selectedIndex && selectedIndex !== correctIndex) {
+                    // Opsi Dipilih Salah -> Merah
+                    btn.className = 'w-full text-left p-3.5 sm:p-4 rounded-2xl border-2 border-rose-500 bg-rose-50 flex items-center gap-3.5 shadow-sm transition-all';
+                    badge.className = 'w-9 h-9 rounded-xl bg-rose-500 text-white font-display font-bold flex items-center justify-center shrink-0';
+                    badge.textContent = '✕';
+                } else {
+                    // Opsi Lainnya -> Redup
+                    btn.className = 'w-full text-left p-3.5 sm:p-4 rounded-2xl border-2 border-slate-100 bg-slate-50/60 opacity-60 flex items-center gap-3.5 transition-all';
+                }
+            }
+        }
+
+        // Menampilkan Kotak Pembahasan
+        function showFeedback(status, title, explanationHTML) {
+            const box = document.getElementById('feedbackBox');
+            const icon = document.getElementById('feedbackIcon');
+            const titleEl = document.getElementById('feedbackTitle');
+            const expEl = document.getElementById('feedbackExplanation');
+
+            box.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'text-emerald-900', 'bg-rose-50', 'border-rose-200', 'text-rose-900', 'bg-amber-50', 'border-amber-200', 'text-amber-900');
+
+            if (status === 'correct') {
+                box.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+                icon.textContent = '🌟';
+            } else if (status === 'wrong') {
+                box.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-900');
+                icon.textContent = '💡';
+            } else {
+                box.classList.add('bg-amber-50', 'border-amber-200', 'text-amber-900');
+                icon.textContent = '⏳';
+            }
+
+            titleEl.textContent = title;
+            expEl.innerHTML = explanationHTML;
+        }
+
+        // Menampilkan Tombol Soal Berikutnya / Lihat Hasil
+        function showNextButton() {
+            const container = document.getElementById('nextButtonContainer');
+            const btnText = document.getElementById('nextBtnText');
+            
+            if (currentQuestionIndex < quizQuestions.length - 1) {
+                btnText.textContent = 'Soal Berikutnya';
+            } else {
+                btnText.textContent = 'Lihat Hasil Akhir';
+            }
+            container.classList.remove('hidden');
+        }
+
+        // Pindah ke Soal Berikutnya atau Layar Akhir
+        function nextQuestion() {
+            playSound('click');
+            if (currentQuestionIndex < quizQuestions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                finishGame();
+            }
+        }
+
+        // Menyelesaikan Game & Menampilkan Layar Hasil
+        function finishGame() {
+            clearInterval(questionTimerInterval);
+            clearInterval(totalTimerInterval);
+            playSound('finish');
+
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+
+            const correctCount = userAnswers.filter(a => a.isCorrect).length;
+            const wrongCount = quizQuestions.length - correctCount;
+            const mins = Math.floor(totalSecondsElapsed / 60).toString().padStart(2, '0');
+            const secs = (totalSecondsElapsed % 60).toString().padStart(2, '0');
+
+            document.getElementById('resultPlayerName').textContent = playerName;
+            document.getElementById('finalScoreText').textContent = score;
+            document.getElementById('correctCountText').textContent = correctCount;
+            document.getElementById('wrongCountText').textContent = wrongCount;
+            document.getElementById('finalTimeText').textContent = `${mins}:${secs}`;
+
+            // Tentukan Bintang & Predikat
+            const starEl = document.getElementById('starRatingDisplay');
+            const predEl = document.getElementById('resultPredicate');
+            const motEl = document.getElementById('motivationBox');
+
+            if (score >= 80) {
+                starEl.textContent = '⭐⭐⭐';
+                predEl.textContent = 'Predikat: Duta Norma Teladan! 🏆';
+                motEl.textContent = 'Luar biasa! Pemahamanmu tentang Norma Agama, Kesusilaan, Kesopanan, dan Hukum sangat matang. Terus jadi teladan positif di sekolah dan masyarakat!';
+                // Efek Konfeti
+                if (typeof confetti === 'function') {
+                    confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+                }
+            } else if (score >= 60) {
+                starEl.textContent = '⭐⭐';
+                predEl.textContent = 'Predikat: Pelajar Sadar Norma! 👍';
+                motEl.textContent = 'Bagus sekali! Kamu sudah memahami sebagian besar materi norma. Yuk baca kembali Kunci Jawaban & Pembahasan untuk menyempurnakan pemahamanmu.';
+            } else {
+                starEl.textContent = '⭐';
+                predEl.textContent = 'Predikat: Pejuang Belajar Norma! 💪';
+                motEl.textContent = 'Jangan menyerah! Belajar adalah proses. Buka tombol "Kunci Jawaban & Pembahasan" di bawah untuk mempelajari kembali setiap soal, lalu coba main lagi ya!';
+            }
+        }
+
+        // Membuka Modal Kunci Jawaban Lengkap
+        function openAnswerKeyModal() {
+            playSound('click');
+            const modal = document.getElementById('answerKeyModal');
+            const content = document.getElementById('answerKeyContent');
+            content.innerHTML = '';
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+
+            userAnswers.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = `p-4 sm:p-5 rounded-2xl bg-white border-2 ${item.isCorrect ? 'border-emerald-200' : 'border-rose-200'} shadow-sm`;
+
+                let userAnswerText = '';
+                if (item.isTimeout) {
+                    userAnswerText = `<span class="text-amber-600 font-semibold">⏰ Tidak dijawab (Waktu Habis)</span>`;
+                } else if (item.isCorrect) {
+                    userAnswerText = `<span class="text-emerald-600 font-semibold">✅ ${optionLetters[item.selectedIndex]}. ${item.options[item.selectedIndex]}</span>`;
+                } else {
+                    userAnswerText = `<span class="text-rose-600 font-semibold">❌ ${optionLetters[item.selectedIndex]}. ${item.options[item.selectedIndex]}</span>`;
+                }
+
+                const correctAnswerText = `<span class="text-emerald-700 font-bold">🔑 ${optionLetters[item.correctIndex]}. ${item.options[item.correctIndex]}</span>`;
+
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 font-bold text-xs">
+                            Soal #${idx + 1} • ${item.category}
+                        </span>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold ${item.isCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
+                            ${item.isCorrect ? 'Benar (+10)' : 'Salah (0)'}
+                        </span>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-800 mb-3 leading-relaxed">
+                        ${item.question.replace(/\n/g, '<br>')}
+                    </p>
+                    <div class="space-y-1.5 text-xs sm:text-sm bg-slate-50 p-3 rounded-xl border border-slate-100 mb-3">
+                        <div><span class="text-slate-500">Jawabanmu:</span> ${userAnswerText}</div>
+                        <div><span class="text-slate-500">Kunci Jawaban:</span> ${correctAnswerText}</div>
+                    </div>
+                    <div class="text-xs sm:text-sm text-slate-600 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100/80 leading-relaxed">
+                        <strong class="text-indigo-900">💡 Pembahasan:</strong> ${item.explanation}
+                    </div>
+                `;
+                content.appendChild(card);
+            });
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeAnswerKeyModal() {
+            playSound('click');
+            document.getElementById('answerKeyModal').classList.add('hidden');
+        }
+
+        // Mengulang Permainan
+        function restartGame() {
+            playSound('click');
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
